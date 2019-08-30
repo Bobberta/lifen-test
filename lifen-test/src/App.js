@@ -9,13 +9,29 @@ class App extends React.Component {
     error: ''
   };
   handleOnDrop = (file) => {
-
     if (file.length === 1) {
-      this.setState((prevState) => ({ 
-        files: prevState.files.concat(file),
-        latestFileName: file[file.length - 1].name,
-        error: ''
-      }));
+      fetch(
+        'https://fhirtest.uhn.ca/baseDstu3/Binary',
+        { method: 'POST', body: file }
+      ).then((response) => {
+        if(response.ok) {
+        this.setState((prevState) => ({ 
+          files: prevState.files.concat(file),
+          latestFileName: file[file.length - 1].name,
+          error: ''
+        }));
+        } else {
+          this.setState(() => ({ 
+            error: 'Une erreur s\'est produite. Veuillez réessayer dans quelques instants.',
+            latestFileName: undefined
+          }));
+        }
+      }).catch((error) => {
+        this.setState(() => ({ 
+          error: `Une erreur s'est produite. ${error}`,
+          latestFileName: undefined
+        }));
+      });
     } else {
       this.setState(() => ({ 
         latestFileName: '',
@@ -38,8 +54,8 @@ class App extends React.Component {
           )}
         </Dropzone>
         <div>
-          {this.state.latestFileName && <p class="success"><strong>{this.state.latestFileName}</strong> a été téléchargé.</p>}
-          {this.state.error && <p class="error">{this.state.error}</p>}
+          {this.state.latestFileName && <p className="success"><strong>{this.state.latestFileName}</strong> a été téléchargé.</p>}
+          {this.state.error && <p className="error">{this.state.error}</p>}
         </div>
       </div>   
     ) 
