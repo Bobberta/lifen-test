@@ -6,9 +6,26 @@ class App extends React.Component {
   state = {
     files: [],
     latestFileName: undefined,
-    error: ''
+    error: '',
+    binaryCount: undefined
+  };
+  setBinaryCount = () => {
+    fetch(
+      'http://hapi.fhir.org/baseR4/Binary/_history?_pretty=true&summary=count',
+      { method: 'POST' }
+    ).then((response) => {
+      return response.json()
+    }).then((data) => {
+      this.setState(() => ({
+        binaryCount: data.entry.length
+      }));
+    })
   };
   handleOnDrop = (file) => {
+    this.setState(() => ({
+      latestFileName: undefined,
+      binaryCount: undefined
+    }));
     if (file.length === 1) {
       fetch(
         'https://fhirtest.uhn.ca/baseDstu3/Binary',
@@ -20,6 +37,7 @@ class App extends React.Component {
           latestFileName: file[file.length - 1].name,
           error: ''
         }));
+      this.setBinaryCount();
         } else {
           this.setState(() => ({ 
             error: 'Une erreur s\'est produite. Veuillez réessayer dans quelques instants.',
@@ -43,6 +61,7 @@ class App extends React.Component {
       return (
       <div className="App">
         <h1><strong>Lifen Document Uploader</strong></h1>
+        
         <Dropzone onDrop={e => this.handleOnDrop(e)} multiple={false}>
           {({getRootProps, getInputProps}) => (
             <section>
@@ -54,7 +73,7 @@ class App extends React.Component {
           )}
         </Dropzone>
         <div>
-          {this.state.latestFileName && <p className="success"><strong>{this.state.latestFileName}</strong> a été téléchargé.</p>}
+          {this.state.latestFileName && <p className="success"><strong>{this.state.latestFileName}</strong> a été téléchargé. {this.state.binaryCount && <span><br/>Il y a actuellement {this.state.binaryCount} documents sur le serveur.</span>}</p>}
           {this.state.error && <p className="error">{this.state.error}</p>}
         </div>
       </div>   
