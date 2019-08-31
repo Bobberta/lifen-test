@@ -7,7 +7,7 @@
 
 .dragdrop {
   background-color: #EFEFEF;
-  padding: 60px;
+  padding: 40px;
 }
 
 .success {
@@ -21,4 +21,10 @@
   background-color: #e8a9a9;
   color: #783232;
   padding: 20px;
+}
+
+.muted {
+  color: #6F6F6F;
+  font-style: italic;
+  font-size: 10pt;
 }

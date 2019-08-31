@@ -1,6 +1,10 @@
 import React from 'react';
 import './App.css';
 import Dropzone from 'react-dropzone';
+import fs from 'fs';
+import electron from 'electron';
+import chokidar from 'chokidar';
+
 
 class App extends React.Component {
   state = {
@@ -9,6 +13,40 @@ class App extends React.Component {
     error: '',
     binaryCount: undefined
   };
+  componentDidMount() {
+    const documentsPath = (electron.app || electron.remote.app).getPath(
+      'documents'
+    );
+    const lifenDirPath = `${documentsPath}/FHIR`;
+    const checkForDirectory = (path) => {
+      try {
+        fs.mkdirSync(path, { recursive: true})
+      } catch (error) {
+        if (error.code !== 'EEXIST') throw error
+      }
+    }
+    
+    try {
+      checkForDirectory(lifenDirPath)
+      console.log('Directory created!')
+    } catch (error) {
+      console.log(error) 
+    }
+    
+    const watcher = chokidar.watch(`${lifenDirPath}/*.pdf`, {
+      ignoreInitial: true,
+      persistent: true
+
+    });
+    watcher
+      .on('add', (path) => {
+        fs.readFile(path,  (err, data) => {
+          const fileName = path.replace(`${lifenDirPath}/`, '');
+          const file = [new File([data], fileName, {type: "application/pdf"})];
+          this.handleNewFile(file);
+        })
+      });
+  }
   uploadFile = (file) => {
     fetch(
       'https://fhirtest.uhn.ca/baseDstu3/Binary',
@@ -71,6 +109,7 @@ class App extends React.Component {
               <div {...getRootProps()} className="dragdrop">
                 <input {...getInputProps()} />
                 <p>Faites glisser un document médical ici</p>
+                <p className="muted">ou placez-le dans le dossier FHIR</p>
               </div>
             </section>
           )}
