@@ -26,7 +26,6 @@
     "electron-is-dev": "^1.1.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
-    "eslint-utils": "^1.4.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-dropzone": "^10.1.8",
