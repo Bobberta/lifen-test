@@ -95,11 +95,11 @@ class Dashboard extends React.Component {
       this.setErrorMessage('Seuls les fichiers PDF sont pris en charge. Veuillez télécharger un fichier .pdf')
     };
   };
-  render() { 
+  render() {
       return (
       <div className="App">
         <div className="header">
-          <img src="./white-logo.png" alt="logo" className="logo"></img>
+          <img src="./white-logo.png" className="logo"></img>
           <h1><strong>Lifen Document Uploader</strong></h1>
         </div>
         <div className="content">
