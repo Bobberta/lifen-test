@@ -1,12 +1,11 @@
 import React from 'react';
-import '../App.css';
+import '../App.css'; 
 import fs from 'fs';
 import electron from 'electron';
 import chokidar from 'chokidar';
 import DropArea from './DropArea';
 import ErrorMessage from './ErrorMessage';
 import FileList from './FileList';
-import SuccessMessage from './SuccessMessage';
 
 
 class Dashboard extends React.Component {
@@ -17,13 +16,11 @@ class Dashboard extends React.Component {
     binaryCount: undefined
   };
   componentDidMount() {
-    const docsDirPath = (electron.app || electron.remote.app).getPath(
-      'documents'
-    );
-    const fhirDirPath = `${docsDirPath}/FHIR`;
+    // Create /FHIR directory if it doesn't exist
+    const fhirDirPath = `${(electron.app || electron.remote.app).getPath('documents')}/FHIR`;
     const checkForDirectory = (path) => {
       try {
-        fs.mkdirSync(path, { recursive: true})
+        fs.mkdirSync(path, { recursive: true })
       } catch (error) {
         if (error.code !== 'EEXIST') throw error
       }
@@ -33,6 +30,7 @@ class Dashboard extends React.Component {
     } catch (error) {
       console.log(error) 
     };
+    // Initialize file watcher
     const watcher = chokidar.watch(`${fhirDirPath}/*.pdf`, {
       ignoreInitial: true,
       persistent: true
@@ -45,32 +43,44 @@ class Dashboard extends React.Component {
           this.handleNewFile(file);
         })
       });
-  }
+    // Display count of files on the server
+    this.setBinaryCount();
+  };
+
   uploadFile = (file) => {
     fetch(
       'https://fhirtest.uhn.ca/baseDstu3/Binary',
       { method: 'POST', body: file }
-    ).then(() => {
+    ).then((response) => {
+        console.log(response);
         this.setState((prevState) => ({ 
           files: prevState.files.concat(file),
           latestFileName: file[file.length - 1].name,
           error: ''
         }));
+
         this.setBinaryCount();
       }
     ).catch((error) => {
       this.setState(() => ({ 
-        error: `Une erreur s'est produite. ${error}`,
+        error: `Une erreur s'est produite : ${error}`,
         latestFileName: undefined
       }));
     });
   };
+
   setErrorMessage = (error) => {
     this.setState(() => ({ 
       latestFileName: '',
       error: error
     }));
+    setTimeout(() => {
+      this.setState(() => ({
+        error: undefined
+      }));
+    }, 5000);
   };
+
   setBinaryCount = () => {
     fetch(
       'http://hapi.fhir.org/baseR4/Binary/_history?_pretty=true&summary=count',
@@ -79,8 +89,10 @@ class Dashboard extends React.Component {
       return response.json()
     }).then((data) => {
       this.setState(() => ({ binaryCount: data.entry.length}));
+      console.log(data);
     })
   };
+
   handleNewFile = (file) => {
     this.setState(() => ({
       latestFileName: undefined,
@@ -95,12 +107,17 @@ class Dashboard extends React.Component {
       this.setErrorMessage('Seuls les fichiers PDF sont pris en charge. Veuillez télécharger un fichier .pdf')
     };
   };
+
   render() { 
       return (
       <div className="App">
         <div className="header">
-          <img src="./white-logo.png" alt="logo" className="logo"></img>
-          <h1><strong>Lifen Document Uploader</strong></h1>
+          <div className="title">
+            <img src="./white-logo.png" alt="logo" className="logo"></img>
+            <h1><strong>Lifen Document Uploader</strong></h1>
+          </div> 
+          {this.state.binaryCount && <p className="file-count">Files on the server: {this.state.binaryCount}</p>}
+
         </div>
         <div className="content">
           <div className="left-panel">
@@ -115,7 +132,6 @@ class Dashboard extends React.Component {
             />
           </div>
           <div className="notifications">
-            <SuccessMessage latestFileName={this.state.latestFileName}/>
             <ErrorMessage error={this.state.error}/>
           </div>
         </div> 

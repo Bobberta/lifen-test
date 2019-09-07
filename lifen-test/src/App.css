@@ -7,7 +7,7 @@
 .dragdrop {
   background-color: #FFF;
   padding: 40px;
-  height: 50vh;
+  height: 300px;
   text-align: center;
   border: dotted #4255dd 3px;
   border-radius: 10px;
@@ -17,7 +17,7 @@
   background-color: #c6dbb4;
   border-radius: 5px;
   color: #436e3c;
-  padding: 20px;
+  padding: 5px 20px;
   line-height: 2em;
 }
 
@@ -25,7 +25,7 @@
   background-color: #e8a9a9;
   border-radius: 5px;
   color: #783232;
-  padding: 20px;
+  padding: 5px 20px;
 }
 
 .muted {
@@ -38,10 +38,16 @@
   background-color: #4255dd;
   color: #fff;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 0px 60px;
   top: 0px;
-  width: 100%;
+  width: 90%;
+}
+
+.title {
+  display: flex;
+  align-items: center;
 }
 
 .logo{
@@ -87,5 +93,5 @@
 }
 
 .drag-illustration {
-  width: 70%;
+  width: 60%;
 }

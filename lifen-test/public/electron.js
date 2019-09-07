@@ -16,8 +16,8 @@ function createWindow() {
     }});
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
   if (isDev) {
-   // mainWindow.webContents.openDevTools();
-   // BrowserWindow.addDevToolsExtension('/Users/anais.limpalaer/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.0.6_0');
+   mainWindow.webContents.openDevTools();
+   BrowserWindow.addDevToolsExtension('/Users/anais.limpalaer/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.0.6_0');
   }
   mainWindow.on('closed', () => mainWindow = null);
 }

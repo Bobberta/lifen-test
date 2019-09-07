@@ -23,9 +23,8 @@
     }
   },
   "dependencies": {
+    "chokidar": "^3.0.2",
     "electron-is-dev": "^1.1.0",
-    "enzyme": "^3.10.0",
-    "enzyme-adapter-react-16": "^1.14.0",
     "eslint-utils": "^1.4.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
@@ -43,6 +42,9 @@
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "yarn build",
     "electron-pack": "electron-builder -mw"
+  },
+  "jest": {
+    "snapshotSerializers": ["enzyme-to-json/serializer"]
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -62,10 +64,13 @@
   "devDependencies": {
     "@rescripts/cli": "^0.0.11",
     "@rescripts/rescript-env": "^0.0.10",
-    "chokidar": "^3.0.2",
     "concurrently": "^4.1.2",
     "electron": "^6.0.6",
     "electron-builder": "^21.2.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
+    "enzyme-to-json": "^3.4.0",
+    "react-test-renderer": "^16.9.0",
     "wait-on": "^3.3.0"
   }
 }
