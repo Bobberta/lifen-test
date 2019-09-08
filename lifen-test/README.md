@@ -4,7 +4,7 @@
 
 ```yarn electron-dev```
 
-## Building the app
 
-```yarn electron-pack```
+## Patching fsevents errors
 
+If you run into any fsevents related error, run `yarn patch-packages` and try running the app again.
