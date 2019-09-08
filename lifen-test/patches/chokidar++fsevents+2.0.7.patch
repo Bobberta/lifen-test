@@ -1,0 +1,38 @@
+diff --git a/node_modules/chokidar/node_modules/fsevents/fsevents.js b/node_modules/chokidar/node_modules/fsevents/fsevents.js
+index d0659de..e98a523 100644
+--- a/node_modules/chokidar/node_modules/fsevents/fsevents.js
++++ b/node_modules/chokidar/node_modules/fsevents/fsevents.js
+@@ -10,17 +10,17 @@ if (process.platform !== 'darwin') {
+   throw new Error(`Module 'fsevents' is not compatible with platform '${process.platform}'`);
+ }
+ 
+-const Native = require('./fsevents.node');
+-const con = Native.constants;
++import { constants, start, stop } from './fsevents.node';
++const con = constants;
+ 
+ function watch(path, handler) {
+   if ('string' !== typeof path) throw new TypeError(`argument 1 must be a string and not a ${typeof path}`);
+   if ('function' !== typeof handler) throw new TypeError(`argument 2 must be a function and not a ${typeof handler}`);
+ 
+-  let instance = Native.start(path, handler);
++  let instance = start(path, handler);
+   if (!instance) throw new Error(`could not watch: ${path}`);
+   return () => {
+-    const result = instance ? Promise.resolve(instance).then(Native.stop) : null;
++    const result = instance ? Promise.resolve(instance).then(stop) : null;
+     instance = null;
+     return result;
+   };
+@@ -57,6 +57,8 @@ function getFileChanges(flags) {
+   };
+ }
+ 
+-exports.watch = watch;
+-exports.getInfo = getInfo;
+-exports.constants = con;
++const _watch = watch;
++export { _watch as watch };
++const _getInfo = getInfo;
++export { _getInfo as getInfo };
++export const constants = con;

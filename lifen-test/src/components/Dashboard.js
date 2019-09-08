@@ -6,14 +6,13 @@ import chokidar from 'chokidar';
 import DropArea from './DropArea';
 import ErrorMessage from './ErrorMessage';
 import FileList from './FileList';
+import Header from './Header';
 
-
-class Dashboard extends React.Component {
+class Dashboard extends React.Component { 
   state = {
     files: [],
-    latestFileName: undefined,
     error: '',
-    binaryCount: undefined
+    binaryCount: null
   };
   componentDidMount() {
     // Create /FHIR directory if it doesn't exist
@@ -38,12 +37,14 @@ class Dashboard extends React.Component {
     watcher
       .on('add', (path) => {
         fs.readFile(path,  (err, data) => {
+          // Prepare file for handleNewFile
           const fileName = path.replace(`${fhirDirPath}/`, '');
-          const file = [new File([data], fileName, {type: "application/pdf"})];
+          const file = [ new File([data], fileName, { type: "application/pdf" }) ];
+
           this.handleNewFile(file);
         })
       });
-    // Display count of files on the server
+    // Display server file count
     this.setBinaryCount();
   };
 
@@ -51,52 +52,44 @@ class Dashboard extends React.Component {
     fetch(
       'https://fhirtest.uhn.ca/baseDstu3/Binary',
       { method: 'POST', body: file }
-    ).then((response) => {
-        console.log(response);
+    ).then(() => {
         this.setState((prevState) => ({ 
           files: prevState.files.concat(file),
-          latestFileName: file[file.length - 1].name,
           error: ''
         }));
-
+        // Update server file count
         this.setBinaryCount();
       }
     ).catch((error) => {
       this.setState(() => ({ 
-        error: `Une erreur s'est produite : ${error}`,
-        latestFileName: undefined
+        error: `Une erreur s'est produite : ${error}`
       }));
     });
   };
 
   setErrorMessage = (error) => {
     this.setState(() => ({ 
-      latestFileName: '',
       error: error
     }));
     setTimeout(() => {
       this.setState(() => ({
-        error: undefined
+        error: null
       }));
     }, 5000);
   };
 
   setBinaryCount = () => {
     fetch(
-      'http://hapi.fhir.org/baseR4/Binary/_history?_pretty=true&summary=count',
+      'https://fhirtest.uhn.ca/baseDstu3/Binary/_history?_pretty=true&summary=count',
       { method: 'POST' }
     ).then((response) => {
       return response.json()
     }).then((data) => {
-      this.setState(() => ({ binaryCount: data.entry.length}));
-      console.log(data);
+      this.setState(() => ({ binaryCount: data.total }));
     })
   };
 
   handleNewFile = (file) => {
-    this.setState(() => ({
-      latestFileName: undefined,
-    }));
     if (file.length === 1 && file[0].size < 2000000 && file[0].type === "application/pdf") {
       this.uploadFile(file);
     } else if (file.length > 1) {
@@ -111,31 +104,21 @@ class Dashboard extends React.Component {
   render() { 
       return (
       <div className="App">
-        <div className="header">
-          <div className="title">
-            <img src="./white-logo.png" alt="logo" className="logo"></img>
-            <h1><strong>Lifen Document Uploader</strong></h1>
-          </div> 
-          {this.state.binaryCount && <p className="file-count">Files on the server: {this.state.binaryCount}</p>}
-
-        </div>
+        <Header 
+          binaryCount={this.state.binaryCount}
+        />
         <div className="content">
-          <div className="left-panel">
-            <FileList 
-              files={this.state.files}
-              binaryCount={this.state.binaryCount}
-            />
-          </div>
-          <div className="right-panel">
-            <DropArea 
+          <FileList 
+            files={this.state.files}
+          />
+          <DropArea 
             handleNewFile={this.handleNewFile}
-            />
-          </div>
-          <div className="notifications">
-            <ErrorMessage error={this.state.error}/>
-          </div>
-        </div> 
-      </div>   
+          />
+        </div>
+        <div className="notifications">
+          <ErrorMessage error={this.state.error}/>
+        </div>
+      </div>  
     ) 
   }
 };

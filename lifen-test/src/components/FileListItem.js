@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 const FileListItem = (props) => (
     <div className="file-list-item">
         <p className="file-list-item-name">{props.file.name}</p>
