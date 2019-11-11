@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<FileListItem /> renders correctly 1`] = `
+<div
+  className="file-list-item"
+>
+  <p
+    className="file-list-item-name"
+  >
+    Un fichier PDF
+  </p>
+  <p>
+    0.0Ko
+  </p>
+</div>
+`;

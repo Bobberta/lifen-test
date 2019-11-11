@@ -1,11 +1,14 @@
 import React from 'react';
 
-
-const FileListItem = (props) => (
+const FileListItem = (props) => {
+  const { size, name } = props.file;
+  const fileSize = Number(size / 1000).toFixed(1);
+  return (
     <div className="file-list-item">
-        <p className="file-list-item-name">{props.file.name}</p>
-        <p>{`${Number(props.file.size / 1000).toFixed(1)}Ko`}</p>
+      <p className="file-list-item-name">{name}</p>
+      <p>{`${fileSize}Ko`}</p>
     </div>
-);
+  );
+};
 
 export default FileListItem;
