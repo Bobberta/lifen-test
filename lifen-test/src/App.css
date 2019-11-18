@@ -1,6 +1,15 @@
-
 .App {
   margin: auto;
+}
+
+.loading-screen {
+  display: flex;
+  align-items: center;
+}
+
+.loading-screen:first-child {
+  margin-left: 45vw;
+  margin-top: 45vh;
 }
 
 /* HEADER */
@@ -21,7 +30,7 @@
   align-items: center;
 }
 
-.logo{
+.logo {
   height: 30px;
   margin-right: 20px;
 }
@@ -59,11 +68,10 @@
   font-weight: 700;
 }
 
-
 /* DRAG'N'DROP */
 
 .dragdrop {
-  background-color: #FFF;
+  background-color: #fff;
   padding: 40px;
   height: 300px;
   text-align: center;
@@ -76,7 +84,7 @@
 }
 
 .muted {
-  color: #6F6F6F;
+  color: #6f6f6f;
   font-style: italic;
   font-size: 10pt;
 }
@@ -96,6 +104,3 @@
   color: #783232;
   padding: 5px 20px;
 }
-
-
-
